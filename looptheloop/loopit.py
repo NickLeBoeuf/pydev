@@ -50,7 +50,7 @@ class Grid:
     def generateloop(self, minlength):
         '''Generate a Loop in the Grid of a given minimum length'''
         start = (random.randint(0,self.width),random.randint(0,self.height))
-        start = (3,2)
+        start = (1,1)
         self.length = 0 # This is the current length of the loop
         print 'Generating a {0}-length loop starting at '.format(minlength)+format(start)
         print self.build('r',start[0],start[1],minlength)
@@ -207,8 +207,15 @@ class Grid:
         To be used on a grid where the loop is present and complete.'''
         for y in range(self.height):
             for x in range(self.width):
-                printd("Cell[{0}][{1}]".format(x,y))
-                
+                self.cells[x][y]=0 
+                if self.rows[y][x]=='#':
+                   self.cells[x][y]+=1 
+                if self.rows[y+1][x]=='#':
+                   self.cells[x][y]+=1 
+                if self.cols[x][y]=='#':
+                   self.cells[x][y]+=1 
+                if self.cols[x+1][y]=='#':
+                   self.cells[x][y]+=1 
 
 
 ## 
@@ -244,6 +251,7 @@ debugON = 1
 random.seed(3)
 
 gr = Grid(6,4)
+gr = Grid(5,5)
 gr = Grid(4,2)
 
 
@@ -258,9 +266,9 @@ gr = Grid(4,2)
 
 print "#######################################################"
 gr.display()
-gr.generateloop(4)
+gr.generateloop(8)
 gr.display()
 
 gr.fillallcells()
-
+gr.display()
 
