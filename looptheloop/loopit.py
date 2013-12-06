@@ -52,9 +52,9 @@ class Grid:
         start = (random.randint(0,self.width),random.randint(0,self.height))
         start = (3,2)
         self.length = 0 # This is the current length of the loop
-        printd('Generating a {0}-length loop starting at '.format(minlength)+format(start))
-        printd(self.build('r',start[0],start[1],minlength))
-        printd('Length is {0:2d}'.format(self.length))
+        print 'Generating a {0}-length loop starting at '.format(minlength)+format(start)
+        print self.build('r',start[0],start[1],minlength)
+        print 'Length is {0:2d}'.format(self.length)
 
     def build(self, direction, stx,sty, minlength):
         ''' Method that is called recursively to build the loop \
@@ -87,6 +87,7 @@ class Grid:
             # if we arrive here, that means that all 4 directions have failed
             # so the segment we have just filled must be erased.
             self.length -= 1           
+            printd('Length is {0:2d}'.format(self.length))
             self.unfillgrid(scoord[0],scoord[1],ecoord[0],ecoord[1])
             return 'CANT'
         elif drawtest == 'CANT':
@@ -230,17 +231,18 @@ def printd(string):
 
 debugON = 1
 
+random.seed(3)
 
 gr = Grid(6,4)
 gr = Grid(4,2)
 
 
-gr.rows[0][0]='-'
-gr.rows[0][1]='-'
-gr.rows[0][2]='-'
-gr.rows[2][3]='-'
-
-gr.cells[3][1]=2
+#gr.rows[0][0]='-'
+#gr.rows[0][1]='-'
+#gr.rows[0][2]='-'
+#gr.rows[2][3]='-'
+#
+#gr.cells[3][1]=2
 
 #print(gr)
 
@@ -249,7 +251,6 @@ gr.display()
 gr.generateloop(4)
 gr.display()
 
-printd("Hello")
 
 
 
