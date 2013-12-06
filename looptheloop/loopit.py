@@ -202,6 +202,15 @@ class Grid:
         return(x,y)
 
 
+    def fillallcells(self):
+        '''Method to fill all cells with numbers according to the loop in place\
+        To be used on a grid where the loop is present and complete.'''
+        for y in range(self.height):
+            for x in range(self.width):
+                printd("Cell[{0}][{1}]".format(x,y))
+                
+
+
 ## 
 class Direction:
     ''' Basic class to define directions'''
@@ -252,6 +261,6 @@ gr.display()
 gr.generateloop(4)
 gr.display()
 
-
+gr.fillallcells()
 
 
