@@ -17,7 +17,7 @@ class Grid:
         '''Fill the Grid with empty stuff everywhere'''
         self.rows = [['-' for x in range(self.width)] for x in range(self.height+1)]
         self.cols = [['|' for x in range(self.height)] for x in range(self.width+1)]
-        self.cells = [[0 for x in range(self.height)] for x in range(self.width)]
+        self.cells = [[' ' for x in range(self.height)] for x in range(self.width)]
         self.corners = [['.' for x in range(self.width+1)] for x in range(self.height+1)]
 
     def __str__(self):
@@ -74,15 +74,15 @@ class Grid:
             self.fillgrid(scoord[0],scoord[1],ecoord[0],ecoord[1])
             self.length+=1
             print 'Length is {0:2d}'.format(self.length)
-            drawdir = Direction('u') # initial try is up (then r,d,l)
+            dirtable = ['u','d','l','r']
             buildloop = 1 # Let's build a loop
             while buildloop:
-                buildtest=self.build(drawdir.dir,ecoord[0],ecoord[1],minlength)
+                drawdir = dirtable.pop(random.randint(0,len(dirtable)-1)) # choose a dir to try
+                buildtest=self.build(drawdir,ecoord[0],ecoord[1],minlength)
                 if buildtest == 'DONE':
                     return 'DONE'
                 # if not, that mean CANT, try another direction
-                drawdir.next() # Select next direction to test
-                if drawdir.dir == 'u' :  # and stop if the 4 directions have been tried
+                if len(dirtable) == 0 :  # and stop if the 4 directions have been tried
                     buildloop = 0
             # if we arrive here, that means that all 4 directions have failed
             # so the segment we have just filled must be erased.
@@ -202,7 +202,7 @@ class Grid:
 class Direction:
     ''' Basic class to define directions'''
     def __init__(self,direction):
-        self.dir=direction;
+        self.dir=direction
 
     def next(self):
         if (self.dir=='u') :
@@ -216,13 +216,16 @@ class Direction:
         else:
             print('Error in dir definition'.format(self))
 
+      
+        
+
 
 #######################################################
 
 
 
 gr = Grid(6,4)
-gr = Grid(4,2)
+gr = Grid(5,5)
 
 
 gr.rows[0][0]='-'
@@ -239,8 +242,5 @@ gr.display()
 gr.generateloop(13)
 gr.display()
 
-d = Direction('r')
-print d.dir
-d.next()
-print d.dir
+
 
