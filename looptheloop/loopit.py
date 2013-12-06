@@ -40,40 +40,40 @@ class Grid:
             for c in range(0, self.width):
                 line2 = line2+format(self.cols[c][r])+format(self.cells[c][r])
             line2 = line2+format(self.cols[self.width][r])
-            print line1+'\n'+line2
+            printd(line1+'\n'+line2)
         # Final Line
         fline = ''
         for c in range(0, self.width):
             fline = fline+' '+format(self.rows[self.height][c])
-        print fline+'\n'    
+        printd(fline+'\n')    
 
     def generateloop(self, minlength):
         '''Generate a Loop in the Grid of a given minimum length'''
         start = (random.randint(0,self.width),random.randint(0,self.height))
         start = (3,2)
         self.length = 0 # This is the current length of the loop
-        print 'Generating a {0}-length loop starting at '.format(minlength)+format(start)
-        print self.build('r',start[0],start[1],minlength)
-        print 'Length is {0:2d}'.format(self.length)
+        printd('Generating a {0}-length loop starting at '.format(minlength)+format(start))
+        printd(self.build('r',start[0],start[1],minlength))
+        printd('Length is {0:2d}'.format(self.length))
 
     def build(self, direction, stx,sty, minlength):
         ''' Method that is called recursively to build the loop \
         parameters are the direction, the location of the start point stx,sty \
         and the awaited minimum length of the final loop\
         return is DONE, CANT'''
-        print "build({0},{1},{2},{3})".format(direction, stx,sty, minlength)
+        printd("build({0},{1},{2},{3})".format(direction, stx,sty, minlength))
         scoord = (stx, sty)
         ecoord = self.gotocoord(stx,sty,direction)
-        print "gotocoord({0},{1},{2})={3},{4}".format(stx,sty,direction, ecoord[0],ecoord[1])
+        printd("gotocoord({0},{1},{2})={3},{4}".format(stx,sty,direction, ecoord[0],ecoord[1]))
         if ecoord == (-1,-1) :
             return 'CANT'
         drawtest=self.drawto(ecoord[0],ecoord[1],direction)
-        print "drawto({0},{1},{2})={3}".format(ecoord[0],ecoord[1],direction,drawtest)
+        printd("drawto({0},{1},{2})={3}".format(ecoord[0],ecoord[1],direction,drawtest))
         if drawtest == 'OK' :
             # if we can draw, then fill the grid and continue to build
             self.fillgrid(scoord[0],scoord[1],ecoord[0],ecoord[1])
             self.length+=1
-            print 'Length is {0:2d}'.format(self.length)
+            printd('Length is {0:2d}'.format(self.length))
             dirtable = ['u','d','l','r']
             buildloop = 1 # Let's build a loop
             while buildloop:
@@ -102,7 +102,10 @@ class Grid:
                 return 'DONE' 
                 
     def fillgrid(self,sx,sy,ex,ey):
-        print "fillgrid {0} {1} {2} {3}".format(sx,sy,ex,ey)
+        ''' This method fills one element of rows[][] or cols[][] \
+        inputs are 2 corners: start(x,y) and end(x,y). A line is drawn between \
+        the two corners. The two corners must be adjacent.'''
+        printd("fillgrid {0} {1} {2} {3}".format(sx,sy,ex,ey))
         if sx == ex :   # Fill a Cols
             if sy > ey :
                 self.cols[sx][ey]='#'
@@ -118,7 +121,7 @@ class Grid:
         self.display()
                               
     def unfillgrid(self,sx,sy,ex,ey):
-        print "unfillgrid {0} {1} {2} {3}".format(sx,sy,ex,ey)
+        printd("unfillgrid {0} {1} {2} {3}".format(sx,sy,ex,ey))
         if sx == ex :   # Fill a Cols
             if sy > ey :
                 self.cols[sx][ey]='|'
@@ -130,14 +133,14 @@ class Grid:
             else:
                 self.rows[sy][sx]='-'
         else:
-            print "Error in fillgrid method - bad arguments."
+            print "Error in unfillgrid method - bad arguments."
         self.display()
                                     
                 
     def drawto(self, x , y, fromdir)   : 
         '''Method to test if drawing to x,y (in a line in fromdir direction)\
         will end up in a OK, CANT or STOP status'''
-        #print "drawto({0},{1},{2})".format(x,y,fromdir)
+        #printd("drawto({0},{1},{2})".format(x,y,fromdir))
         # test first if we dont try to draw to an existing line
         if (x>0):
             if (self.rows[y][x-1] == '#') and fromdir == 'r':
@@ -193,7 +196,6 @@ class Grid:
         elif (direction == 'l') and (x>0):
             x = x - 1    
         else:
-            #print('gotocoord:Error in dir definition')
             return(-1,-1)
         return(x,y)
 
@@ -217,15 +219,20 @@ class Direction:
             print('Error in dir definition'.format(self))
 
       
+def printd(string):
+    if debugON == 1 :
+        print string
         
 
 
 #######################################################
 
 
+debugON = 1
+
 
 gr = Grid(6,4)
-gr = Grid(5,5)
+gr = Grid(4,2)
 
 
 gr.rows[0][0]='-'
@@ -239,8 +246,10 @@ gr.cells[3][1]=2
 
 print "#######################################################"
 gr.display()
-gr.generateloop(13)
+gr.generateloop(4)
 gr.display()
+
+printd("Hello")
 
 
 
