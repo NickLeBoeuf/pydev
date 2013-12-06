@@ -61,6 +61,7 @@ class Grid:
         parameters are the direction, the location of the start point stx,sty \
         and the awaited minimum length of the final loop\
         return is DONE, CANT'''
+        printd('build: Length is {0:2d}'.format(self.length))
         printd("build({0},{1},{2},{3})".format(direction, stx,sty, minlength))
         scoord = (stx, sty)
         ecoord = self.gotocoord(stx,sty,direction)
@@ -98,7 +99,7 @@ class Grid:
                 return 'CANT' 
             else:           # We are done. Draw the line and Finish all methods
                 self.fillgrid(scoord[0],scoord[1],ecoord[0],ecoord[1])
-                self.length=+1    
+                self.length+=1    
                 print 'Length is {0:2d}'.format(self.length)
                 return 'DONE' 
                 
