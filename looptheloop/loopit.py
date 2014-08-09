@@ -50,7 +50,7 @@ class Grid:
     def generateloop(self, minlength):
         '''Generate a Loop in the Grid of a given minimum length'''
         start = (random.randint(0,self.width),random.randint(0,self.height))
-        start = (1,1)
+        start = (3,3)
         self.length = 0 # This is the current length of the loop
         print 'Generating a {0}-length loop starting at '.format(minlength)+format(start)
         print self.build('r',start[0],start[1],minlength)
@@ -92,7 +92,7 @@ class Grid:
             buildloop = 1 # Let's build a loop
             while buildloop:
                 # choose a direction to try 
-                chosen_direction = self.choose_direction(dirtable, ecoord[0], ecoord[1], scoord[0], scoord[1], 'random')
+                chosen_direction = self.choose_direction(dirtable, ecoord[0], ecoord[1], scoord[0], scoord[1], 'weighting')
                 # Remove it from the allowed possibilities before testing it.
                 drawdir = dirtable.pop(chosen_direction) 
                 # Build in that direction, using this build method recursively.
@@ -132,12 +132,40 @@ class Grid:
        # First algo is pure random
        if algo == 'random':
            return (random.randint(0,len(dirtable)-1)) 
-       # Default algo is weighting one
+       elif algo == 'weighting' :
+           # Determine how the current location is surrounded by lines
+           weighttable = {'u':99, 'd':99, 'l':99, 'r':99}
+           for d in dirtable :
+               if d == 'u' :
+                 weighttable[d] = self.countlines(x-1,y-2)+self.countlines(x,y-2)
+               elif d == 'd' :
+                 weighttable[d] = self.countlines(x-1,y+1)+self.countlines(x,y+1)
+               elif d == 'l' :
+                 weighttable[d] = self.countlines(x-2,y-1)+self.countlines(x-2,y)
+               elif d == 'r' :
+                 weighttable[d] = self.countlines(x+1,y-1)+self.countlines(x+1,y)
+               else:
+                   print "Malformed dirtable"
+                   return 'CRASH'
+           printd('WeightTable of {0},{1}'.format(x,y))
+           print weighttable           
+           return (random.randint(0,len(dirtable)-1)) 
+       # Default algo is the the random one
        else:
            return (random.randint(0,len(dirtable)-1)) 
 
        
-       
+    def countlines(self,x,y):
+        cnt = 0
+        if self.rows[y][x]=='#':
+           cnt += 1 
+        if self.rows[y+1][x]=='#':
+           cnt += 1 
+        if self.cols[x][y]=='#':
+           cnt += 1 
+        if self.cols[x+1][y]=='#':
+           cnt += 1 
+        return cnt
        
                 
     def fillgrid(self,sx,sy,ex,ey):
@@ -322,7 +350,7 @@ random.seed(3)
 gr = Grid(6,4)
 gr = Grid(5,5)
 gr = Grid(4,2)
-#gr = Grid(5,5)
+gr = Grid(9,9)
 
 
 #gr.rows[0][0]='-'
