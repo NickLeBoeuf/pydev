@@ -63,28 +63,38 @@ class Grid:
         return is DONE, CANT'''
         printd('build: Length is {0:2d}'.format(self.length))
         printd("build({0},{1},{2},{3})".format(direction, stx,sty, minlength))
+        
+        ## Determine the cell coords where to go (and stop method if we are out of the boundaries)
         scoord = (stx, sty)
         ecoord = self.gotocoord(stx,sty,direction)
         printd("gotocoord({0},{1},{2})={3},{4}".format(stx,sty,direction, ecoord[0],ecoord[1]))
         if ecoord == (-1,-1) :
             return 'CANT'
+            
+        ## Test if we can draw to the chosen direction (ie.there could be already some loop present)
         drawtest=self.drawto(ecoord[0],ecoord[1],direction)
         printd("drawto({0},{1},{2})={3}".format(ecoord[0],ecoord[1],direction,drawtest))
         if drawtest == 'OK' :
-            # if we can draw, then fill the grid and continue to build
+            # We can draw (and it is not the end of the loop), so fill the grid and continue to build
             self.fillgrid(scoord[0],scoord[1],ecoord[0],ecoord[1])
             self.length+=1
             printd('Length is {0:2d}'.format(self.length))
             dirtable = ['u','d','l','r']
+
             buildloop = 1 # Let's build a loop
             while buildloop:
-                drawdir = dirtable.pop(random.randint(0,len(dirtable)-1)) # choose a dir to try
+                # choose a direction to try - TODO: Put a smarter algorithm here
+                drawdir = dirtable.pop(random.randint(0,len(dirtable)-1)) 
+                # Build in that direction, using this build method recursively.
                 buildtest=self.build(drawdir,ecoord[0],ecoord[1],minlength)
+                # Test the return value - If it's done, the loop is looped !
                 if buildtest == 'DONE':
                     return 'DONE'
                 # if not, that mean CANT, try another direction
                 if len(dirtable) == 0 :  # and stop if the 4 directions have been tried
-                    buildloop = 0
+                    buildloop = 0   # Exit the while loop
+                # end while buildloop
+
             # if we arrive here, that means that all 4 directions have failed
             # so the segment we have just filled must be erased.
             self.length -= 1           
@@ -94,6 +104,7 @@ class Grid:
         elif drawtest == 'CANT':
             return 'CANT'
         elif drawtest == 'STOP':
+            # The loop is looped !
             if self.length < minlength: # The line that looped is not long enough
                 print "Too Short"
                 return 'CANT' 
@@ -123,6 +134,9 @@ class Grid:
         self.display()
                               
     def unfillgrid(self,sx,sy,ex,ey):
+        ''' This method deletes one element of rows[][] or cols[][] \
+        inputs are 2 corners: start(x,y) and end(x,y). The grid is filled with empty value. \
+        The two corners must be adjacent.'''
         printd("unfillgrid {0} {1} {2} {3}".format(sx,sy,ex,ey))
         if sx == ex :   # Fill a Cols
             if sy > ey :
@@ -160,6 +174,7 @@ class Grid:
         # if not, test if it is possible to draw:
         # end point should only be surrounded by 1 line at most
         surroundlines = 0
+        # check the surrounding lines in 4 directions
         if (x>0) and (fromdir != 'r') :
             if self.rows[y][x-1] == '#' :
                 surroundlines += 1
@@ -173,6 +188,7 @@ class Grid:
             if self.cols[x][y] == "#":
                 surroundlines += 1
         
+        # Verify how many surrounding lines have been counted.
         if surroundlines == 0:
             return 'OK'
         elif surroundlines == 1:
@@ -202,8 +218,8 @@ class Grid:
         return(x,y)
 
 
-    def fillallcells(self):
-        '''Method to fill all cells with numbers according to the loop in place\
+    def fillcellswithnumbers(self):
+        '''Method to fill all cells with NUMBERS according to the loop in place\
         To be used on a grid where the loop is present and complete.'''
         for y in range(self.height):
             for x in range(self.width):
@@ -238,6 +254,7 @@ class Direction:
 
       
 def printd(string):
+    ''' Main printd Method - Print only if Debug parameter is ON'''
     if debugON == 1 :
         print string
         
@@ -269,6 +286,6 @@ gr.display()
 gr.generateloop(8)
 gr.display()
 
-gr.fillallcells()
+gr.fillcellswithnumbers()
 gr.display()
 
