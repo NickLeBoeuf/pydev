@@ -56,6 +56,10 @@ class Grid:
         print self.build('r',start[0],start[1],minlength)
         print 'Length is {0:2d}'.format(self.length)
 
+
+    ## TODO: If needed, implement a counter/watchdog that will interrupt the trial after a given recurrence number.
+    ## If the loop is started like a snail, the algorithm will search for a very long time before coming back to the start.
+    
     def build(self, direction, stx,sty, minlength):
         ''' Method that is called recursively to build the loop \
         parameters are the direction, the location of the start point stx,sty \
@@ -79,12 +83,18 @@ class Grid:
             self.fillgrid(scoord[0],scoord[1],ecoord[0],ecoord[1])
             self.length+=1
             printd('Length is {0:2d}'.format(self.length))
+            # Using a table with 4 elements that will be emptied progressively 
+            # to memorize the directions that have been explored
             dirtable = ['u','d','l','r']
+            # Remove firstly the direction in dirtable where we come from. This will optimize the search.
+            dirtable.pop(self.in_integer(self.oppositedir(direction)))
 
             buildloop = 1 # Let's build a loop
             while buildloop:
-                # choose a direction to try - TODO: Put a smarter algorithm here
-                drawdir = dirtable.pop(random.randint(0,len(dirtable)-1)) 
+                # choose a direction to try 
+                chosen_direction = self.choose_direction(dirtable, ecoord[0], ecoord[1], scoord[0], scoord[1], 'random')
+                # Remove it from the allowed possibilities before testing it.
+                drawdir = dirtable.pop(chosen_direction) 
                 # Build in that direction, using this build method recursively.
                 buildtest=self.build(drawdir,ecoord[0],ecoord[1],minlength)
                 # Test the return value - If it's done, the loop is looped !
@@ -112,7 +122,23 @@ class Grid:
                 self.fillgrid(scoord[0],scoord[1],ecoord[0],ecoord[1])
                 self.length+=1    
                 print 'Length is {0:2d}'.format(self.length)
-                return 'DONE' 
+                return 'DONE'
+                
+    def choose_direction(self, dirtable, x, y, comefromx, comefromy, algo):
+       ''' This method returns a direction (using an offset in dirtable input) using an \
+       chosen algorithm, that can be pure random, or smarter, using some weighting for ex.\
+       Inputs are the position to draw from, the previous position of the line, and the table\
+       containing the available allowed directions. Last parameter is the algorithm used.'''
+       # First algo is pure random
+       if algo == 'random':
+           return (random.randint(0,len(dirtable)-1)) 
+       # Default algo is weighting one
+       else:
+           return (random.randint(0,len(dirtable)-1)) 
+
+       
+       
+       
                 
     def fillgrid(self,sx,sy,ex,ey):
         ''' This method fills one element of rows[][] or cols[][] \
@@ -217,6 +243,32 @@ class Grid:
             return(-1,-1)
         return(x,y)
 
+    def oppositedir(self, direction) :
+        ''' Method to give the opposite direction of the input direction '''
+        if (direction == 'u') :
+            return 'd'
+        if (direction == 'd') :
+            return 'u'
+        if (direction == 'l') :
+            return 'r'
+        if (direction == 'r') :
+            return 'l'                       
+        print "Error: malformed input direction".format(direction)
+
+    def in_integer(self, direction):
+        ''' Method to convert a string direction into integer value '''
+         # dirtable = ['u','d','l','r'] => 0,1,2,3
+        if (direction == 'u') :
+            return 0
+        if (direction == 'd') :
+            return 1
+        if (direction == 'l') :
+            return 2
+        if (direction == 'r') :
+            return 3                       
+        print "Error: malformed input direction".format(direction)
+
+
 
     def fillcellswithnumbers(self):
         '''Method to fill all cells with NUMBERS according to the loop in place\
@@ -270,6 +322,7 @@ random.seed(3)
 gr = Grid(6,4)
 gr = Grid(5,5)
 gr = Grid(4,2)
+#gr = Grid(5,5)
 
 
 #gr.rows[0][0]='-'
