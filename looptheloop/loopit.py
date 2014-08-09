@@ -157,13 +157,14 @@ class Grid:
        
     def countlines(self,x,y):
         cnt = 0
-        if self.rows[y][x]=='#':
+        printd("Countlines in {0},{1}".format(x,y))
+        if (y>-1 and y<self.height and x>-1 and x<self.width) and (self.rows[y][x]=='#') :
            cnt += 1 
-        if self.rows[y+1][x]=='#':
+        if (y+1>-1 and y+1<self.height and x>-1 and x<self.width) and (self.rows[y+1][x]=='#'):
            cnt += 1 
-        if self.cols[x][y]=='#':
+        if (y>-1 and y<self.height and x>-1 and x<self.width) and (self.cols[x][y]=='#' ):
            cnt += 1 
-        if self.cols[x+1][y]=='#':
+        if (y>-1 and y<self.height and x+1>-1 and x+1<self.width) and (self.cols[x+1][y]=='#' ):
            cnt += 1 
         return cnt
        
