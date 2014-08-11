@@ -57,8 +57,10 @@ class Grid:
         print 'Length is {0:2d}'.format(self.length)
 
 
-    ## TODO: If needed, implement a counter/watchdog that will interrupt the trial after a given recurrence number.
-    ## If the loop is started like a snail, the algorithm will search for a very long time before coming back to the start.
+    ## TODO: If needed, implement a counter/watchdog that will interrupt the trial after a given
+    ##    recurrence number.
+    ## If the loop is started like a snail, the algorithm will search for a very long time
+    ## before coming back to the start.
     
     def build(self, direction, stx,sty, minlength):
         ''' Method that is called recursively to build the loop \
@@ -134,22 +136,39 @@ class Grid:
            return (random.randint(0,len(dirtable)-1)) 
        elif algo == 'weighting' :
            # Determine how the current location is surrounded by lines
-           weighttable = {'u':99, 'd':99, 'l':99, 'r':99}
+           noweight=0
+           highweight=100
+           lineweight=10
+           weighttable = {'u':noweight, 'd':noweight, 'l':noweight, 'r':noweight}
            for d in dirtable :
                if d == 'u' :
-                 weighttable[d] = self.countlines(x-1,y-2)+self.countlines(x,y-2)
+                 weighttable[d] = highweight-lineweight*(self.countlines(x-1,y-2)+self.countlines(x,y-2))
                elif d == 'd' :
-                 weighttable[d] = self.countlines(x-1,y+1)+self.countlines(x,y+1)
+                 weighttable[d] = highweight-lineweight*(self.countlines(x-1,y+1)+self.countlines(x,y+1))
                elif d == 'l' :
-                 weighttable[d] = self.countlines(x-2,y-1)+self.countlines(x-2,y)
+                 weighttable[d] = highweight-lineweight*(self.countlines(x-2,y-1)+self.countlines(x-2,y))
                elif d == 'r' :
-                 weighttable[d] = self.countlines(x+1,y-1)+self.countlines(x+1,y)
+                 weighttable[d] = highweight-lineweight*(self.countlines(x+1,y-1)+self.countlines(x+1,y))
                else:
                    print "Malformed dirtable"
                    return 'CRASH'
            printd('WeightTable of {0},{1}'.format(x,y))
-           print weighttable           
-           return (random.randint(0,len(dirtable)-1)) 
+           print weighttable
+           # Choosing the direction
+           highscore = 0
+           posintable = -1 
+           for d in dirtable :
+               posintable = posintable + 1
+               randscore = random.randint(0,weighttable[d])
+               weighttable[d] = randscore
+               if randscore >= highscore :
+                   highscore = randscore
+                   chosendir = posintable             
+           printd('Randomizing the table... Choosing direction {0}.'.format(chosendir))
+           print weighttable
+           print dirtable
+           return chosendir
+#           return (random.randint(0,len(dirtable)-1)) 
        # Default algo is the the random one
        else:
            return (random.randint(0,len(dirtable)-1)) 
@@ -346,7 +365,7 @@ def printd(string):
 
 debugON = 1
 
-random.seed(3)
+#random.seed(3)
 
 gr = Grid(6,4)
 gr = Grid(5,5)
